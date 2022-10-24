@@ -311,7 +311,6 @@ public class Matrix {
 	 * @param b int
 	 * @return Matrix
 	 */
-
 	public static Matrix Multiply(Matrix a, int b) {
 		float[][] ar = a.array;
 
@@ -322,26 +321,6 @@ public class Matrix {
 		}
 		return new Matrix(ar);
 	}
-
-
-  /**
-   * multiplies every element of Matrix a(first param) with float b(second
-   * param)
-   * 
-   * @param a Matrix
-   * @param b float
-   * @return Matrix
-   */
-  public static Matrix MultiplyF(Matrix a, float b) {
-    float[][] ar = a.array;
-
-    for (int j = 0; j < ar.length; j++) {
-      for (int i = 0; i < ar[0].length; i++) {
-        ar[j][i] = ar[j][i] * b;
-      }
-    }
-    return new Matrix(ar);
-  }
 
 	/**
 	 * multiplies every element of Array a(first param) with integer b(second param)
