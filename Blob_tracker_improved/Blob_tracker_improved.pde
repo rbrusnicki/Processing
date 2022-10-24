@@ -231,8 +231,11 @@ void draw() {
   float[] aux5 = {Cy + Cpy*Cz,       -2*Cpy*Cx, -2*Cx, 2*Cz - 2*Cpy*Cy,   Cy - Cpy*Cz, 2*Cz + 2*Cpy*Cy, 2*Cx, Cpy*Cz - Cy,        2*Cpy*Cx, - Cy - Cpy*Cz};
   
   float[][] M1 = {aux0,aux1,aux2,aux3,aux4,aux5};
+  //Matrix.print(Matrix.array(M1));
   
   float[][] M2 = {{1,0,Apx},{0,1,Apy},{1,0,Bpx},{0,1,Bpy},{1,0,Cpx},{0,1,Cpy}};
+  float[][] M2t = {{1,0,1,0,1,0},{0,1,0,1,0,1},{Apx,Apy,Bpx,Bpy,Cpx,Cpy}};
+  //Matrix.print(Matrix.array(M2));
   
   b1[0][0] = q.array[0][0]*q.array[0][0];
   b1[1][0] = q.array[0][0]*q.array[1][0];
@@ -245,12 +248,22 @@ void draw() {
   b1[8][0] = q.array[2][0]*q.array[3][0];
   b1[9][0] = q.array[3][0]*q.array[3][0];
   
-  Matrix M2t = Transpose(Matrix.array(M2),6,3);
+  //Matrix M2t = Transpose(Matrix.array(M2),6,3);
+  //Matrix.print(M2t);
   
-  Matrix AUX1 = Matrix.Multiply( M2t, Matrix.array(M2));
-  Matrix AUX2 = Matrix.Multiply( M2t, Matrix.Multiply(Matrix.array(M1), Matrix.array(b1)));
+  Matrix AUX1 = Matrix.Multiply( Matrix.array(M2t), Matrix.array(M2));
+  Matrix AUX2 = Matrix.Multiply( Matrix.array(M2t), Matrix.Multiply(Matrix.array(M1), Matrix.array(b1)));
+  //Matrix.print(AUX1);
  
-  Matrix pos = Matrix.Multiply(Matrix.inverse(AUX1), AUX2);
+  Matrix AUX3 = Matrix.inverse(AUX1);
+  Matrix.print(AUX3);
+  
+  //float det = AUX1.array[0][0]*AUX1.array[1][1]*AUX1.array[2][2] + AUX1.array[0][1]*AUX1.array[1][2]*AUX1.array[2][0] + AUX1.array[0][2]*AUX1.array[1][0]*AUX1.array[2][1];
+  //det = det - AUX1.array[0][2]*AUX1.array[1][1]*AUX1.array[2][0] - AUX1.array[0][1]*AUX1.array[1][0]*AUX1.array[2][2] - AUX1.array[0][0]*AUX1.array[1][2]*AUX1.array[2][1];
+  //float det2[][] = {{det}};
+  //Matrix.print(det2);
+  
+  Matrix pos = Matrix.Multiply(AUX1, AUX2);
   
   text(-pos.array[0][0], 100, 300);
   text(-pos.array[1][0], 100, 310);
