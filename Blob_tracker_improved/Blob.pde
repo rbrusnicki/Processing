@@ -3,6 +3,8 @@ class Blob {
   float maxx;
   float miny;
   float maxy;
+  float avgx;
+  float avgy;
   
   ArrayList<PVector> points;
 
@@ -11,6 +13,8 @@ class Blob {
     miny = y;
     maxx = x;
     maxy = y;
+    avgx = x;
+    avgy = y;
     points = new ArrayList<PVector>();
     points.add(new PVector(x,y));
   }
@@ -41,6 +45,8 @@ class Blob {
     miny = min(miny, y);
     maxx = max(maxx, x);
     maxy = max(maxy, y);
+    avgx = (minx + maxx)/2;
+    avgy = (miny + maxy)/2;
   }
   
   void show() {
@@ -48,7 +54,7 @@ class Blob {
     fill(255);
     strokeWeight(2);
     rectMode(CORNERS);
-    rect(minx,miny,maxx,maxy);
+    //rect(minx,miny,maxx,maxy);
     for (PVector v : points) {
       stroke(0, 0, 255);
       point(v.x, v.y);
