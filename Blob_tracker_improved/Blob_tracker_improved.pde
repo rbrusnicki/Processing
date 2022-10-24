@@ -17,7 +17,9 @@ float[][] A = {{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0}};
 float[][] A2 = {{0,0,0,0,0,0},{0,0,0,0,0,0},{0,0,0,0,0,0},{0,0,0,0,0,0}};
 float[][] b = {{0},{0},{0},{1}};
 float[][] b2 = {{0},{0},{0},{0},{0},{0}};
-
+float[][] M1 = {{0,0,0,0,0,0,0,0,0,0},{0,0,0,0,0,0,0,0,0,0},{0,0,0,0,0,0,0,0,0,0},{0,0,0,0,0,0,0,0,0,0},{0,0,0,0,0,0,0,0,0,0},{0,0,0,0,0,0,0,0,0,0}};
+float[][] M2 = {{0,0,0},{0,0,0},{0,0,0},{0,0,0},{0,0,0},{0,0,0}};
+float[][] b1 = {{0},{0},{0},{0},{0},{0},{0},{0},{0},{0}};
 
 ArrayList<Blob> blobs = new ArrayList<Blob>();
 
@@ -209,6 +211,50 @@ void draw() {
   text(q.array[2][0], 100, 220);
   text(q.array[3][0], 100, 230);
   
+  //Solução para posição
+  //M1[0][0] = Ax + Apx*Az;
+  //M1[0][1] = 2*Az - 2*Apx*Ax;
+  //M1[0][2] = 2*Ay;
+  //M1[0][3] = -2*Apx*Ay;
+  //M1[0][4] = - Ax - Apx*Az;
+  //M1[0][5] = 2*Apx*Ay;
+  //M1[0][6] = 2*Ay;
+  //M1[0][7] = Apx*Az - Ax;
+  //M1[0][8] = 2*Az + 2*Apx*Ax;
+  //M1[0][9] = Ax - Apx*Az;
+  
+  float[] aux0 = {Ax + Apx*Az, 2*Az - 2*Apx*Ax,  2*Ay,       -2*Apx*Ay, - Ax - Apx*Az,        2*Apx*Ay, 2*Ay, Apx*Az - Ax, 2*Az + 2*Apx*Ax,   Ax - Apx*Az};
+  float[] aux1 = {Ay + Apy*Az,       -2*Apy*Ax, -2*Ax, 2*Az - 2*Apy*Ay,   Ay - Apy*Az, 2*Az + 2*Apy*Ay, 2*Ax, Apy*Az - Ay,        2*Apy*Ax, - Ay - Apy*Az};
+  float[] aux2 = {Bx + Bpx*Bz, 2*Bz - 2*Bpx*Bx,  2*By,       -2*Bpx*By, - Bx - Bpx*Bz,        2*Bpx*By, 2*By, Bpx*Bz - Bx, 2*Bz + 2*Bpx*Bx,   Bx - Bpx*Bz};
+  float[] aux3 = {By + Bpy*Bz,       -2*Bpy*Bx, -2*Bx, 2*Bz - 2*Bpy*By,   By - Bpy*Bz, 2*Bz + 2*Bpy*By, 2*Bx, Bpy*Bz - By,        2*Bpy*Bx, - By - Bpy*Bz};
+  float[] aux4 = {Cx + Cpx*Cz, 2*Cz - 2*Cpx*Cx,  2*Cy,       -2*Cpx*Cy, - Cx - Cpx*Cz,        2*Cpx*Cy, 2*Cy, Cpx*Cz - Cx, 2*Cz + 2*Cpx*Cx,   Cx - Cpx*Cz};
+  float[] aux5 = {Cy + Cpy*Cz,       -2*Cpy*Cx, -2*Cx, 2*Cz - 2*Cpy*Cy,   Cy - Cpy*Cz, 2*Cz + 2*Cpy*Cy, 2*Cx, Cpy*Cz - Cy,        2*Cpy*Cx, - Cy - Cpy*Cz};
+  
+  float[][] M1 = {aux0,aux1,aux2,aux3,aux4,aux5};
+  
+  float[][] M2 = {{1,0,Apx},{0,1,Apy},{1,0,Bpx},{0,1,Bpy},{1,0,Cpx},{0,1,Cpy}};
+  
+  b1[0][0] = q.array[0][0]*q.array[0][0];
+  b1[1][0] = q.array[0][0]*q.array[1][0];
+  b1[2][0] = q.array[0][0]*q.array[2][0];
+  b1[3][0] = q.array[0][0]*q.array[3][0];
+  b1[4][0] = q.array[1][0]*q.array[1][0];
+  b1[5][0] = q.array[1][0]*q.array[2][0];
+  b1[6][0] = q.array[1][0]*q.array[3][0];
+  b1[7][0] = q.array[2][0]*q.array[2][0];
+  b1[8][0] = q.array[2][0]*q.array[3][0];
+  b1[9][0] = q.array[3][0]*q.array[3][0];
+  
+  Matrix M2t = Transpose(Matrix.array(M2),6,3);
+  
+  Matrix AUX1 = Matrix.Multiply( M2t, Matrix.array(M2));
+  Matrix AUX2 = Matrix.Multiply( M2t, Matrix.Multiply(Matrix.array(M1), Matrix.array(b1)));
+ 
+  Matrix pos = Matrix.Multiply(Matrix.inverse(AUX1), AUX2);
+  
+  text(-pos.array[0][0], 100, 300);
+  text(-pos.array[1][0], 100, 310);
+  text(-pos.array[2][0], 100, 320);
 }
 
 void mousePressed() {
@@ -236,4 +282,16 @@ Matrix MultiplyF(Matrix a, float b) {
     }
   }
   return Matrix.array(ar);
+}
+
+Matrix Transpose(Matrix a, int l, int c) {
+    float[][] arr = new float[c][l];
+    for (int i = 0; i < c; i++) {
+      for (int j = 0; j < l; j++) {
+
+        arr[i][j] = a.array[j][i];
+
+      }
+    }
+    return Matrix.array(arr);
 }
